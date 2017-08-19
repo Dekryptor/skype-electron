@@ -1,0 +1,16 @@
+{
+  "name": "skype-preview",
+  "productName": "Skype Preview",
+  "version": "8.4.76.54035",
+  "appVersion": "8.4",
+  "appBuild": "54035",
+  "cobrand": "76",
+  "app": "s4l",
+  "environment": "",
+  "buildChannel": "preview",
+  "main": "Main.js",
+  
+  
+  "license": "Copyright: Microsoft 2017",
+  "private": true
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Page Needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>Skype Preview</title>
+
+    <!-- Mobile Specific Metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+    <!-- Enable CSP headers
+    ================================================== -->
+    <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; https: blob:; script-src file: https://*.skype.com https://*.skypeassets.com &#39;unsafe-eval&#39;;style-src file: &#39;self&#39; https://*.skype.com https://*.skypeassets.com &#39;unsafe-inline&#39;;frame-ancestors &#39;self&#39;;connect-src https://*.skype.com https://*.skypeassets.com https://s4lazuremedia.azurewebsites.net https://*.bing.com https://*.live.com https://*.aria.microsoft.com https://scsquery.trafficmanager.net/ https://mmquery.cloudapp.net/ https://scsclientinstrument.cloudapp.net/ https://*.trouter.io wss://*.trouter.io wss://*.trouter.io:443 wss://*.skype.com https://*.bingapis.com wss://wsapi.trafficmanager.net wss://wsapi-dev.cloudapp.net wss://wsapi-qa.cloudapp.net https://brbv2.trafficmanager.net https://brbv2.blob.core.windows.net;img-src file: data: blob: https://*.skype.com https://*.skypeassets.com https://*.skypeassets.net https://*.storage.msn.com https://*.storage.live.com https://*.azureedge.net https://az705183.vo.msecnd.net https://*.blob.core.windows.net https://*.bing.com https://*.bingapis.com;media-src file: blob: https://*;font-src file: data: https://*.skype.com https://*.skype.net https://*.skypeassets.com;form-action &#39;self&#39; data: https://login.skype.com https://login.live.com;child-src https://*.skype.com https://*.skype.net https://login.skype.com https://login.live.com https://*.bing.com;report-uri https://csp.skype.com/">
+    
+
+    
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="/css/skype.css">
+
+    
+
+    <!-- Misc Scripts
+    ================================================== -->
+
+</head>
+
+<body class="page page--basic page--electron">
+
+    
+    <input type="hidden" name="skypeId" id="skypeId" value="">
+    <input type="hidden" name="skypeToken" id="skypeToken" value="">
+    <input type="hidden" name="skypeTokenExpiration" id="skypeTokenExpiration" value="">
+    <input type="hidden" name="loadPath" id="loadPath" value="">
+    <input type="hidden" name="appVersion" id="appVersion" value="8.4.76.54035">
+    <input type="hidden" name="errorText" id="errorText" value="">
+    
+    <!-- Primary Page Layout
+    ================================================== -->
+    <div class="app-container"></div>
+
+    <!-- End Document
+    ================================================== -->
+    <script src="/js/base64.js"></script>
+    <script src="/js/promise.js"></script>
+    <script src="/js/silentlogin.js"></script>
+    <script src="/js/vendor.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

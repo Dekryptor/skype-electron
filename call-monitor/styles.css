@@ -1,0 +1,233 @@
+@font-face {
+  font-family: 'SkypeAssets-Medium';
+  src: url('file:///fonts/SkypeAssets-Medium.woff') format('woff')
+}
+
+.icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    position: relative;
+
+    font-family: "SkypeAssets-Medium";
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 40px;
+    text-align: center;
+    color: #fff;
+}
+
+.icon .title {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+
+.icon.large {
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+    line-height: 60px;
+    border-radius: 30px;
+}
+
+.icon.extraLarge {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    line-height: 80px;
+    border-radius: 40px;
+}
+
+.icon.small {
+    width: 24px;
+    height: 24px;
+    font-size: 18px;
+    line-height: 24px;
+    border-radius: 24px;
+    margin: 2px;
+
+}
+
+.oneToOne .glyph::before {
+    content: '\E200'
+}
+.group .glyph::before {
+    content: '\E20B'
+}
+.pstn .glyph::before {
+    content: '\E11E'
+}
+.microphoneOn .glyph::before {
+    content: '\E106'
+}
+.microphoneOff .glyph::before {
+    content: '\E107'
+}
+.callStart .glyph::before {
+    content: '\E100'
+}
+.callEnd .glyph::before {
+    content: '\E101'
+}
+.videoOn .glyph::before {
+    content: '\E102'
+}
+.videoOff .glyph::before {
+    content: '\E103'
+}
+.close .glyph::before {
+    content: '\00d7';
+    position: absolute;
+    top: -3px;
+    left: 7px;
+}
+
+body, html, button {
+    margin: 0;
+    padding: 0;
+    border: 0
+}
+
+html, body {
+    background: transparent;
+}
+
+body {
+    -webkit-user-select: none
+}
+
+.content {
+    width: 288px;
+    height: 180px;
+    position: relative;
+    border-radius: 10px;
+    background: #212124;
+}
+
+#overlay {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#topBar {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    border-radius: 10px 10px 0 0;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+#topBar button {
+    background: rgba(0, 0, 0, .3);
+}
+
+#topBar button:hover {
+    background: rgba(0, 0, 0, .5);
+}
+
+#topBar button:disabled {
+    color: #bababa
+}
+
+#topBar button:disabled:hover {
+    background: rgba(0, 0, 0, .3);
+}
+
+#close {
+    position: absolute;
+    top: 1px;
+    right: 5px;
+}
+
+#dragArea {
+    width: 100%;
+    height: 100%;
+}
+
+#avatar, #avatarImage {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+}
+
+#avatar {
+    top: 40px;
+    left: calc(50% - 40px);
+}
+
+#avatar .icon {
+    background: rgb(43, 44, 51)
+}
+
+#avatarImage {
+    top: 0;
+    border-radius: 40px;
+    background-position: 50% 50%;
+    background-size: cover;
+}
+
+.videoContainer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+}
+.videoContainer,
+.videoContainer * {
+    border-radius: 10px;
+}
+
+.buttons {
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.buttons button {
+    background: rgba(0, 0, 0, .3);
+}
+
+.buttons button:hover {
+    background: rgba(0, 0, 0, .5);
+}
+
+.buttons button:disabled {
+    color: #bababa
+}
+.buttons button:disabled:hover {
+    background: rgba(0, 0, 0, .3);
+}
+
+.buttons .callEnd {
+    background: #f44336;
+}
+.buttons .callEnd:hover {
+    background: #e3392c;
+}
+
+.noTransparency .content,
+.noTransparency .videoContainer,
+.noTransparency .videoContainer * {
+    border-radius: 0;
+}
+.noTransparency #avatar {
+    top: 20px
+}
+.noTransparency .buttons {
+    bottom: 5px;
+}
