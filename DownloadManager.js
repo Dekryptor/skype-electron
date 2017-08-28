@@ -3,15 +3,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron = require("electron");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const constants = require("./Constants");
 class DownloadManager {
     constructor(downloader) {
         this.DOWNLOADS_FOLDER_PATH = electron.app.getPath('downloads') || path.join(constants.appDataDir, 'Downloads');
+        this.TEMP_FOLDER_PATH = electron.app.getPath('temp') || path.join(constants.appDataDir, 'temp');
         this._downloader = downloader;
     }
-    getFromUrlWithProgressUpdate(fileUrl, targetFilename, headers) {
-        let filename = this.getUniqueFullPath(targetFilename);
-        return this._downloader.getFromUrl(fileUrl, filename, headers);
+    getFromUrlWithProgressUpdate(fileUrl, downloadToPublicFolder, targetFilename, headers) {
+        let filename;
+        if (downloadToPublicFolder) {
+            filename = this.getUniqueFullPath(targetFilename);
+        }
+        else {
+            const hash = crypto.createHmac('sha256', 'file_storage')
+                .update(fileUrl)
+                .digest('hex');
+            filename = path.join(this.TEMP_FOLDER_PATH, `${hash}${path.extname(targetFilename)}`);
+        }
+        return this._downloader.getFromUrl(fileUrl, filename, headers, true);
     }
     buildDownloadedFileOptions(path) {
         return {

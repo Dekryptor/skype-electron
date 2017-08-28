@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const querystring = require("querystring");
 const electron = require("electron");
 const WindowsAutoUpdater_1 = require("./WindowsAutoUpdater");
+const LinuxAutoUpdater_1 = require("./LinuxAutoUpdater");
 const PackageInfo_1 = require("../configuration/PackageInfo");
 const utils = require("../Utils");
 const UpdateEventType_1 = require("./UpdateEventType");
@@ -43,7 +44,11 @@ class Updater extends CachedPublisher_1.CachedPublisher {
         else if (utils.isWindows()) {
             this.autoUpdater = new WindowsAutoUpdater_1.WindowsAutoUpdater(this.logger, appConfig, this.persistence, this.clientVersion, this.downloader);
         }
+        else {
+            this.autoUpdater = new LinuxAutoUpdater_1.LinuxAutoUpdater(this.logger, this.ecsConfig, this.clientVersion);
+        }
         this.registerAutoUpdaterEvents();
+        this.registerEcsUpdate();
         this.logger.info('[Updater] initialized.');
     }
     start() {
@@ -53,7 +58,7 @@ class Updater extends CachedPublisher_1.CachedPublisher {
             if (this.ecsConfig) {
                 config = this.ecsConfig.getData();
             }
-            this.updateInterval = config ? config.updateInterval : Updater.DEFAULT_UPDATE_INTERVAL;
+            this.updateInterval = config && config.updateInterval ? config.updateInterval : Updater.DEFAULT_UPDATE_INTERVAL;
             this.logger.info('[Updater] Update interval set to', this.updateInterval);
             this.logger.info('[Updater] Starting unexplicit update check as the updater was started.');
             this.checkForUpdates(false);
@@ -69,6 +74,45 @@ class Updater extends CachedPublisher_1.CachedPublisher {
         }
         this.explicitCheck = explicit;
         this.logger.info(`[Updater] Checking for updates, explicit check: ${explicit}`);
+        if (this.isCheckingOrDownloadingUpdates) {
+            this.logger.info('[Updater] Checking for updates already in progress');
+            this.emitEvent(Updater.UPDATE_RESULT, UpdateEventType_1.UpdateEventType.CheckingForUpdates, this.explicitCheck);
+            return;
+        }
+        let feedUrl = this.getUpdateFeedUrl();
+        if (!feedUrl && !utils.isLinux()) {
+            return;
+        }
+        this.setSemaphore();
+        this.logger.info('[Updater] Setting update feed url to: ' + feedUrl);
+        this.autoUpdater.setFeedURL(feedUrl);
+        this.autoUpdater.checkForUpdates();
+    }
+    updatesEnabled() {
+        return this.appConfig.enableUpdates;
+    }
+    quitAndInstall() {
+        if (this.updateInitiated) {
+            return;
+        }
+        this.updateInitiated = true;
+        this.logger.info('[Updater] got quit and install command');
+        this.emitEvent(Updater.INSTALL_UPDATE);
+    }
+    installUpdate() {
+        if (utils.isLinux()) {
+            return;
+        }
+        this.logger.info('[Updater] Actually running the update installation');
+        this.autoUpdater.quitAndInstall();
+    }
+    installWindowsMandatoryUpdatesIfPresent() {
+        if (utils.isWindows() && this.appConfig.enableUpdates) {
+            return this.autoUpdater.installMandatoryUpdatesIfPresent();
+        }
+        return false;
+    }
+    getUpdateFeedUrl() {
         let config;
         if (this.ecsConfig) {
             config = this.ecsConfig.getData();
@@ -85,40 +129,10 @@ class Updater extends CachedPublisher_1.CachedPublisher {
             }
             else {
                 this.logger.info('[Updater] Fallback platform updater feed URL not set. Breaking a check for updates');
-                return;
+                return undefined;
             }
         }
-        if (this.isCheckingOrDownloadingUpdates) {
-            this.logger.info('[Updater] Checking for updates already in progress');
-            this.emitEvent(Updater.UPDATE_RESULT, UpdateEventType_1.UpdateEventType.CheckingForUpdates, this.explicitCheck);
-            return;
-        }
-        this.setSemaphore();
-        let feedUrl = updaterFeedUrl + '?' + this.getQueryString();
-        this.logger.info('[Updater] Setting update feed url to: ' + feedUrl);
-        this.autoUpdater.setFeedURL(feedUrl);
-        this.autoUpdater.checkForUpdates();
-    }
-    updatesEnabled() {
-        return (!utils.isLinux() && this.appConfig.enableUpdates);
-    }
-    quitAndInstall() {
-        if (this.updateInitiated) {
-            return;
-        }
-        this.updateInitiated = true;
-        this.logger.info('[Updater] got quit and install command');
-        this.emitEvent(Updater.INSTALL_UPDATE);
-    }
-    installUpdate() {
-        this.logger.info('[Updater] Actually running the update installation');
-        this.autoUpdater.quitAndInstall();
-    }
-    installWindowsMandatoryUpdatesIfPresent() {
-        if (utils.isWindows() && this.appConfig.enableUpdates) {
-            return this.autoUpdater.installMandatoryUpdatesIfPresent();
-        }
-        return false;
+        return updaterFeedUrl + '?' + this.getQueryString();
     }
     registerAutoUpdaterEvents() {
         if (!this.autoUpdater) {
@@ -156,8 +170,35 @@ class Updater extends CachedPublisher_1.CachedPublisher {
             this.emitEvent(Updater.UPDATE_RESULT, UpdateEventType_1.UpdateEventType.Error, this.explicitCheck);
         });
     }
+    registerEcsUpdate() {
+        if (this.ecsConfig && this.autoUpdater) {
+            this.ecsConfig.on('ecs-data-ready', () => {
+                this.handleEcsUpdate();
+            });
+            this.ecsConfig.on('ecs-data-changed', () => {
+                this.handleEcsUpdate();
+            });
+        }
+    }
+    handleEcsUpdate() {
+        if (!this.updatesEnabled()) {
+            return;
+        }
+        let config = this.ecsConfig.getData();
+        let updateInterval = config && config.updateInterval ? config.updateInterval : Updater.DEFAULT_UPDATE_INTERVAL;
+        if (this.updateInterval !== updateInterval) {
+            this.updateInterval = updateInterval;
+            this.logger.info(`[Updater] Update interval set to ${this.updateInterval}, rescheduling update checks`);
+            if (this.updateTimer) {
+                clearInterval(this.updateTimer);
+                this.updateTimer = undefined;
+                this.startPeriodicChecks();
+            }
+        }
+    }
     startPeriodicChecks() {
         if (!this.updateTimer) {
+            this.logger.debug(`[Updater] Calling startPeriodicChecks with interval ${this.updateInterval}`);
             let callback = () => { this.checkForUpdates(false); };
             this.updateTimer = setInterval(callback, this.updateInterval);
         }

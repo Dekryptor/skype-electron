@@ -15,6 +15,7 @@ const EcsConfig_1 = require("./ecs/EcsConfig");
 const SkypeTray_1 = require("./tray/SkypeTray");
 const ApplicationMenu_1 = require("./ApplicationMenu");
 const PresenceStatus_1 = require("./PresenceStatus");
+const CallMonitorController_1 = require("./CallMonitorController");
 const AuthStore_1 = require("./login/AuthStore");
 const Updater_1 = require("./updater/Updater");
 const UpdateEventType_1 = require("./updater/UpdateEventType");
@@ -53,6 +54,7 @@ class Application {
         this.updater = updater;
         this.authStore = AuthStore_1.getInstance();
         this.registerUpdateEventHandlers();
+        this.registerUrlHandler();
         this.args = parseArgs(process.argv.slice(1));
         logger.info('[Application] Commandline arguments:', this.args);
         this.applyArgumentSecurityFilter();
@@ -78,7 +80,6 @@ class Application {
         if (pendingInstaller) {
             return;
         }
-        this.installUrlHandler();
         fileInterceptor.install();
         this.updateUserTasks(true);
         this.mainWindow = this.createMainWindow();
@@ -87,8 +88,10 @@ class Application {
         this.skypeUri = this.registerSkypeUri();
         this.installAppLifecycleHandlers(this.mainWindow);
         this.registerLocaleChangeListener();
+        this.registerPowerMonitorHandlers();
         this.mainWindow.loadApplication();
         this.initEcs();
+        this.callMonitorController = new CallMonitorController_1.CallMonitorController(this.logger);
         this.isReady = true;
     }
     setMenu(menu) {
@@ -197,7 +200,7 @@ class Application {
             }
         });
     }
-    installUrlHandler() {
+    registerUrlHandler() {
         electron_1.app.on('open-url', (event, url) => {
             event.preventDefault();
             let urlToArgs = [url];
@@ -208,6 +211,14 @@ class Application {
             else {
                 this.storedArgs = urlToArgs;
             }
+        });
+    }
+    registerPowerMonitorHandlers() {
+        electron_1.powerMonitor.on('resume', () => {
+            this.mainWindow.webContents.send('resume');
+        });
+        electron_1.powerMonitor.on('suspend', () => {
+            this.mainWindow.webContents.send('suspend');
         });
     }
     runInFirstInstance(argv) {
@@ -228,9 +239,9 @@ class Application {
         }
     }
     createMainWindow() {
-        let mainWindow = new MainWindow_1.MainWindow(this.configuration, this.logger, this.clientVersion, EcsConfigInit_1.getInstance(), this.updater, this.localisation);
+        let mainWindow = new MainWindow_1.MainWindow(this.configuration, this.logger, this.clientVersion, this.updater, this.localisation);
         mainWindow.window.on('close', (event) => {
-            if (!this.cleanupRunning) {
+            if (!this.cleanupRunning && this.authStore.isAuthenticated()) {
                 this.logger.info('[Application] Running cleanup for MainWindow close.');
                 this.cleanup(() => {
                     if (mainWindow.window)

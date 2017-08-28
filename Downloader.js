@@ -14,12 +14,23 @@ class Downloader {
         this._requests = {};
         this._logger = logger;
     }
-    getFromUrl(fileUrl, targetFilename, headers) {
+    getFromUrl(fileUrl, targetFilename, headers, skipIfTargetExists = false) {
         this._logger.info(`[Downloader] GET file: ${fileUrl} to target: ${targetFilename}`);
         if (this._requests[fileUrl]) {
             return this._requests[fileUrl].progressEmitter;
         }
         const progressEmitter = new events_1.EventEmitter();
+        if (skipIfTargetExists && fs.existsSync(targetFilename)) {
+            setTimeout(() => {
+                progressEmitter.emit('finished', {
+                    statusCode: 304,
+                    body: {
+                        path: targetFilename
+                    }
+                });
+            }, 200);
+            return progressEmitter;
+        }
         const timeoutValue = 2 * 60 * 1000;
         let logger = this._logger;
         let requestOptions = url.parse(fileUrl);
@@ -96,7 +107,7 @@ class Downloader {
                 }
             });
             pipedStream.on('close', () => {
-                if (!this._requests[fileUrl].aborted) {
+                if (this._requests[fileUrl] && !this._requests[fileUrl].aborted) {
                     let error = new Error('Closed Connection');
                     this._handleErrorOrTimeout(error, progressEmitter, fileUrl, null);
                 }

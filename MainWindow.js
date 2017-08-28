@@ -25,7 +25,7 @@ exports.defaultLoginWindowSize = {
     height: 660
 };
 class MainWindow extends WindowBase_1.WindowBase {
-    constructor(appConfig, logger, clientVersion, ecsConfig, updater, localisation) {
+    constructor(appConfig, logger, clientVersion, updater, localisation) {
         super(MainWindow.getWindowOptions(appConfig, logger, localisation), Settings_1.settings.get('app.launchMinimized', false), Settings_1.settings.get('app.minimizeToTray'));
         this.closingAllowed = false;
         this.minimizeToTray = false;
@@ -36,7 +36,6 @@ class MainWindow extends WindowBase_1.WindowBase {
         this.appConfig = appConfig;
         this.localisation = localisation;
         this.logger = logger;
-        this.ecsConfig = ecsConfig;
         this.minimizeToTray = Settings_1.settings.get('app.minimizeToTray');
         this.handleBadgeIcons();
         this.handleNotifications();

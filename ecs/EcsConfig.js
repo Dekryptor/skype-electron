@@ -157,25 +157,13 @@ class EcsConfig extends events_1.EventEmitter {
                 if (res.statusCode === 200) {
                     this.logger.info('[EcsConfig] ECS Config successfully downloaded.');
                     let result = JSON.parse(res.body);
-                    let appOverride = (result.SkypeElectronWrapper.app
-                        && result.SkypeElectronWrapper.override
-                        && result.SkypeElectronWrapper.override[result.SkypeElectronWrapper.app])
-                        ? JSON.parse(JSON.stringify(result.SkypeElectronWrapper.override[result.SkypeElectronWrapper.app]))
-                        : {};
                     resolve({
                         etag: result.Headers.ETag,
                         expires: new Date(result.Headers.Expires),
-                        name: result.SkypeElectronWrapper.name,
-                        app: result.SkypeElectronWrapper.app,
-                        config: result.SkypeElectronWrapper.config,
                         appDisabled: result.SkypeElectronWrapper.appDisabled || false,
-                        cspDisabled: result.SkypeElectronWrapper.cspDisabled || false,
-                        skypetokenScopes: (result.SkypeElectronWrapper.auth && result.SkypeElectronWrapper.auth.skypetokenScopes)
-                            ? result.SkypeElectronWrapper.auth.skypetokenScopes
-                            : '',
-                        appOverride: appOverride,
                         platformUpdaterFeedUrl: result.SkypeElectronWrapper.platformUpdaterFeedUrl,
-                        updateInterval: result.SkypeElectronWrapper.updateInterval
+                        updateInterval: result.SkypeElectronWrapper.updateInterval ? parseInt('' + result.SkypeElectronWrapper.updateInterval, 10) : undefined,
+                        lastVersionAvailable: result.SkypeElectronWrapper.lastVersionAvailable || ''
                     });
                 }
                 else if (res.statusCode === 304) {

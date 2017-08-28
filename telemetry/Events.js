@@ -47,16 +47,6 @@ class TimeSyncEvent extends ElectronTelemetryEvent {
     }
 }
 exports.TimeSyncEvent = TimeSyncEvent;
-class AuthenticationEvent extends ElectronTelemetryEvent {
-    constructor(result, authProvider = 'msa', detailedMessage = null) {
-        super();
-        this.name = 'authentication_event';
-        this.setProperty('authentication_result', result);
-        this.setProperty('authentication_provider', authProvider);
-        this.setProperty('authentication_details', detailedMessage);
-    }
-}
-exports.AuthenticationEvent = AuthenticationEvent;
 class DeprecationEvent extends ElectronTelemetryEvent {
     constructor() {
         super();
@@ -77,23 +67,3 @@ class UncaughtExceptionEvent extends ElectronTelemetryEvent {
     }
 }
 exports.UncaughtExceptionEvent = UncaughtExceptionEvent;
-class ActivityStartedEvent extends ElectronTelemetryEvent {
-    constructor(activityStartTime, entryPoint) {
-        super();
-        this.name = 'kpi_inapp_activity_started';
-        this.setProperty('Entry_Point', entryPoint);
-        this.setProperty('Foreground_Start_Time', activityStartTime);
-    }
-}
-exports.ActivityStartedEvent = ActivityStartedEvent;
-class ActivityEndedEvent extends ElectronTelemetryEvent {
-    constructor(activityStartTime, activityEndTime, entryPoint, exitPoint) {
-        super();
-        this.name = 'kpi_inapp_activity_ended';
-        this.setProperty('Entry_Point', entryPoint);
-        this.setProperty('Exit_point', exitPoint);
-        this.setProperty('Foreground_Start_Time', activityStartTime);
-        this.setProperty('Foregrounded_Duration', activityEndTime - activityStartTime);
-    }
-}
-exports.ActivityEndedEvent = ActivityEndedEvent;

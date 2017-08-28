@@ -10,8 +10,9 @@ const LogsProvider_1 = require("./LogsProvider");
 const KeychainStore_1 = require("./login/KeychainStore");
 const SkypeUriInit_1 = require("./SkypeUriInit");
 const DownloadManager_1 = require("./DownloadManager");
+const ClipboardManager_1 = require("./ClipboardManager");
 const MainWindow_1 = require("./MainWindow");
-const PopupWindow_1 = require("./PopupWindow");
+const CallMonitorController_1 = require("./CallMonitorController");
 const ipc = electron.ipcRenderer;
 const app = electron.remote ? electron.remote.app : electron.app;
 const logsPath = path.join(app.getPath('userData'), Configuration_1.default.log.logsPath);
@@ -25,6 +26,7 @@ class ElectronApi {
         this.webViewBridgeChannelName = exports.webViewBridgeChannelName;
         this.logsProvider = new LogsProvider_1.LogsProvider(logsPath, slimcoreLogPath, mediaLogPath);
         this.downloadManager = DownloadManager_1.getInstance();
+        this.clipboardManager = ClipboardManager_1.getInstance();
         this.keychain = KeychainStore_1.getInstance();
     }
     checkForUpdates() {
@@ -114,9 +116,9 @@ class ElectronApi {
     openThirdPartyNotices() {
         electron.shell.openItem(constants.thirdPartyNoticesFile);
     }
-    createPopup(options) {
+    createCallMonitor(options) {
         options = options || {};
-        return new PopupWindow_1.PopupWindow(options);
+        return new CallMonitorController_1.CallMonitorProxy(options);
     }
     supportsTransparency() {
         if (process.platform === 'darwin') {
@@ -126,6 +128,9 @@ class ElectronApi {
     }
     focusMainWindow() {
         ipc.send('window-focus-called');
+    }
+    primaryDisplaySize() {
+        return electron.screen.getPrimaryDisplay().workAreaSize;
     }
 }
 exports.ElectronApi = ElectronApi;

@@ -15,6 +15,7 @@ const authStore = require("./login/AuthStore");
 const keychainStore = require("./login/KeychainStore");
 const downloader = require("./Downloader");
 const downloadManager = require("./DownloadManager");
+const clipboardManager = require("./ClipboardManager");
 function initializeUpdaterDependencies(appConfig) {
     Settings_1.settings.init();
     logger.init(appConfig);
@@ -22,6 +23,7 @@ function initializeUpdaterDependencies(appConfig) {
     DeviceInfo_1.deviceInfo.init(logger.getInstance());
     clientVersion.init();
     authStore.init();
+    clipboardManager.init();
     keychainStore.init(logger.getInstance());
     telemetryLogger.init(appConfig, clientVersion.getInstance(), DeviceInfo_1.deviceInfo, language.language);
     exactTime.init(logger.getInstance(), telemetryLogger.telemetryLogger);

@@ -13,37 +13,39 @@ const slimcoreLogPath = app.getPath('userData') + '/skylib';
 const mediaLogPath = app.getPath('userData') + '/media-stack';
 const clientVersion = ClientVersion_1.getInstance();
 function apiForMain() {
-    if (!window['electronApi']) {
+    if (!window.electronApi) {
         setupSpellcheck(window);
-        window['electronApi'] = new ElectronApi_1.ElectronApi();
+        window.electronApi = new ElectronApi_1.ElectronApi();
     }
-    const win = window;
-    win['electronSafeIpc'] = ipc;
+    window.electronSafeIpc = ipc;
     setupCallingWithSlimCore(window);
 }
 exports.apiForMain = apiForMain;
 function setupCallingWithSlimCore(window) {
     try {
-        const slimCore = module.require('slimcore');
-        const videoRenderer = module.require('slimcore/lib/video-renderer');
-        let xWindow = window;
         window.addEventListener('unload', () => {
-            if (xWindow.SlimCore && xWindow.SlimCore.Instance) {
-                xWindow.SlimCore.Instance.dispose();
+            if (window.SlimCoreInstance) {
+                window.SlimCoreInstance.dispose();
             }
+            delete window.SlimCoreInstance;
+            delete window.SlimCore;
+            delete window.VideoRenderer;
         });
-        xWindow.SlimCore = xWindow.SlimCore || slimCore;
-        xWindow.VideoRenderer = xWindow.VideoRenderer || videoRenderer;
-        const logFileName = 'slimcore-' + new Date().getTime() + '.log';
-        const slimCoreOptions = {
-            version: clientVersion.getFullVersion(),
-            logFileName: logFileName,
-            dataPath: slimcoreLogPath,
-            mediaLogsPath: mediaLogPath,
-            isEncrypted: true
-        };
-        const instance = xWindow.SlimCore.Instance || slimCore.createSlimCoreInstance(slimCoreOptions);
-        xWindow.SlimCore.Instance = instance;
+        if (!window.SlimCoreInstance) {
+            const slimCore = module.require('slimcore');
+            const videoRenderer = module.require('slimcore/lib/video-renderer');
+            const logFileName = 'slimcore-' + new Date().getTime() + '.log';
+            const slimCoreOptions = {
+                version: clientVersion.getFullVersion(),
+                logFileName: logFileName,
+                dataPath: slimcoreLogPath,
+                mediaLogsPath: mediaLogPath,
+                isEncrypted: true
+            };
+            window.SlimCoreInstance = slimCore.createSlimCoreInstance(slimCoreOptions);
+            window.SlimCore = slimCore;
+            window.VideoRenderer = videoRenderer;
+        }
     }
     catch (e) {
         Logger_1.getInstance().error('[S4lApi] Init slimcore error:' + e.message + '\n' + e.stack);

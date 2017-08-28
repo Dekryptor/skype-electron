@@ -158,7 +158,7 @@ class ApplicationMenu extends events_1.EventEmitter {
         return new electron_1.MenuItem({
             label: menuLabel,
             submenu: [{
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.NewGroupChatLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.NewGroupChatLabel'), true),
                     accelerator: 'CmdOrCtrl+G',
                     enabled: this.isAuthenticated(),
                     click: () => {
@@ -166,7 +166,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                     }
                 },
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.New1on1ChatLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.New1on1ChatLabel'), true),
                     accelerator: 'CmdOrCtrl+N',
                     enabled: this.isAuthenticated(),
                     click: () => {
@@ -174,7 +174,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                     }
                 },
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.NewCallLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.NewCallLabel'), true),
                     enabled: this.isAuthenticated(),
                     click: () => {
                         this.emitMenuEvent('menu-new-call');
@@ -182,7 +182,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                 },
                 this.buildSeparator(),
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.ViewProfileLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.ViewProfileLabel'), true),
                     enabled: this.isAuthenticated(),
                     click: () => {
                         this.emitMenuEvent('menu-open-profile');
@@ -244,7 +244,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                 },
                 this.buildSeparator(),
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.SearchSkypeLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.SearchSkypeLabel'), true),
                     accelerator: 'CmdOrCtrl+F',
                     enabled: this.isAuthenticated(),
                     click: () => {
@@ -358,7 +358,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                     }
                 },
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.SettingsLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.SettingsLabel'), true),
                     accelerator: 'Ctrl+,',
                     visible: !Utils_1.isMac(),
                     enabled: this.isAuthenticated(),
@@ -367,7 +367,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                     }
                 },
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.AudioVideoSettingsLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.AudioVideoSettingsLabel'), true),
                     visible: !Utils_1.isMac(),
                     enabled: this.isAuthenticated(),
                     click: () => {
@@ -376,7 +376,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                 },
                 this.buildSeparator(!Utils_1.isMac()),
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString(exporterMenuLabel)),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString(exporterMenuLabel), true),
                     enabled: this.isAuthenticated(),
                     click: () => {
                         this.openExporterWindow();
@@ -447,7 +447,7 @@ class ApplicationMenu extends events_1.EventEmitter {
                 },
                 this.buildSeparator(),
                 {
-                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.ReportProblemLabel')),
+                    label: labelDecorator.getLabel(LanguageInit_1.language.getString('Menu.ReportProblemLabel'), true),
                     enabled: this.isAuthenticated(),
                     click: () => {
                         this.emitMenuEvent('menu-report-problem');

@@ -110,6 +110,7 @@ function overrideLogger() {
         };
     });
 }
+exports.overrideLogger = overrideLogger;
 function exposeLocalisationModule() {
     window['localisation'] = LanguageInit_1.language;
     window['domLocaliser'] = LanguageInit_1.domLocaliser;

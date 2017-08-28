@@ -4,7 +4,7 @@ class MenuLabelDecorator {
     constructor() {
         this.usedCharacterCodes = new Set();
     }
-    getLabel(str) {
+    getLabel(str, needsMoreInfo = false) {
         let insertPositon = -1;
         let lowerCasedStr = str.toLowerCase();
         for (let i = 0; i < str.length; i++) {
@@ -27,6 +27,9 @@ class MenuLabelDecorator {
         }
         if (insertPositon !== -1) {
             str = `${str.slice(0, insertPositon)}&${str.slice(insertPositon)}`;
+        }
+        if (needsMoreInfo) {
+            str = str + '...';
         }
         return str;
     }

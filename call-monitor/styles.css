@@ -220,14 +220,9 @@ body {
     background: #e3392c;
 }
 
+.noTransparency #topBar,
 .noTransparency .content,
 .noTransparency .videoContainer,
 .noTransparency .videoContainer * {
     border-radius: 0;
-}
-.noTransparency #avatar {
-    top: 20px
-}
-.noTransparency .buttons {
-    bottom: 5px;
 }
